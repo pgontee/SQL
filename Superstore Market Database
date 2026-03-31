@@ -42,3 +42,59 @@ WHERE category = "Kitchen Supplies";
 #Show a statistic about the item quantity
 SELECT sum(stock_quantity), item_name FROM superstore 
 GROUP BY item_name;
+
+
+#view full dataset
+
+select * 
+from superstore;
+
+
+#Count total rows
+
+select count(*) as total_order
+from superstore;
+
+
+#check unique categories
+
+select distinct category
+from superstore;
+
+#Price Analysis- Highest & lowest priced products
+
+select item_name, category, price
+from superstore
+where price = (select MAX(price) from superstore)
+OR price = (select MIN(price) from superstore);
+
+
+#Average price per category
+
+select category, AVG(price) AS avg_price
+from superstore
+group by category
+order by avg_price desc;
+
+#Total price per category
+
+select category, Sum(stock_quantity) as total_inventory
+from superstore
+group by category
+order by total_inventory desc;
+
+#Top 5 best-selling products
+
+select category, AVG(price) as avg_price
+from superstore
+group by category
+order by avg_price desc;
+
+#Highest and lowest priced item per category
+
+SELECT item_name, category, price
+FROM (SELECT *,
+           RANK() OVER (PARTITION BY category ORDER BY price ASC) AS low_rank,
+           RANK() OVER (PARTITION BY category ORDER BY price DESC) AS high_rank
+    FROM superstore)
+WHERE low_rank = 1 OR high_rank = 1;
